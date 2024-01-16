@@ -8,8 +8,10 @@ from kafka import KafkaConsumer
 from datetime import datetime
 from pyspark.sql.functions import explode,from_json,col
 from pyspark.sql.types import StringType,IntegerType,StructType,StructField
+import logging
 current_date=str(datetime.now())
 # env_var=dotenv_values('.env')
+logger = logging.getLogger("spark_structured_streaming")
 
 
 
@@ -33,6 +35,8 @@ def create_sparksession():
 
     # Set GCS credentials
     spark.sparkContext._jsc.hadoopConfiguration().set("google.cloud.auth.service.account.json.keyfile",gcs_keyfilee)
+    spark.sparkContext.setLogLevel("ERROR")
+    logging.info('Spark session created successfully')
     return spark   
 # create_sparksession()
 
@@ -74,13 +78,18 @@ def read_stream():
 
 
 def write_stream():
-    bucket_streamm = read_stream()
-    bucket_uri = ""
-    checkpoint_uri = ""
-    storage_stream = bucket_streamm.writeStream \
-    .format('csv').option('path',bucket_uri)\
-    .option('checkpointLocation',checkpoint_uri)\
-    .start().awaitTermination()
-    print('Streaming to GCS.......')
+  """
+    Starts the streaming to table spark_streaming.random_names in cassandra
+  """
+  logging.info("Streaming is being started...")
+  bucket_streamm = read_stream()
+  bucket_uri = ""
+  checkpoint_uri = ""
+  storage_stream = bucket_streamm.writeStream \
+  .format('csv')\
+  .option('path',bucket_uri)\
+  .option('checkpointLocation',checkpoint_uri)\
+  .start().awaitTermination()
+  print('Streaming to GCS.......')
     
 write_stream()
