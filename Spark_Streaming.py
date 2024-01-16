@@ -10,8 +10,7 @@ from pyspark.sql.functions import explode,from_json,col
 from pyspark.sql.types import StringType,IntegerType,StructType,StructField
 current_date=str(datetime.now())
 # env_var=dotenv_values('.env')
-access_key=""
-secret_key=""
+
 
 
 
@@ -59,7 +58,6 @@ def schema():
     StructField('company', StringType(), False),
     StructField('quantity', IntegerType(), False),
     StructField('price',IntegerType(), False)])
-    print(columns)
     return columns
 # schema()
 
@@ -82,4 +80,16 @@ def read_stream():
     df2=df1.selectExpr("CAST(value AS STRING)",'headers')
     df3=df2.select(from_json('value',schema=schema()).alias('temp')).select('temp.*')
     return df3
-read_stream()
+# read_stream()
+
+
+def write_stream():
+    bucket_streamm = read_stream()
+    bucket_uri = ""
+    checkpoint_uri = ""
+    storage_stream = bucket_streamm.writeStream \
+    .format('csv').option('path',bucket_uri)\
+    .option('checkpointLocation',checkpoint_uri)\
+    .start().awaitTermination()
+    print('Streaming to GCS.......')
+print(write_stream())
