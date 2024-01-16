@@ -14,6 +14,7 @@ In this project, we created continous streams of data using the python's Faker l
 
   ```python
   docker-compose -f docker-compose.yml up -d
+```
 
 To see if the container is running, you can run docker ps This lists out all the running containers.
 
