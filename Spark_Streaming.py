@@ -55,7 +55,7 @@ def schema():
 def read_stream():
     kafka_boostrap_server = "164.92.85.68" + ":9092"
     print(kafka_boostrap_server)
-    kafka_topic = "voters_topic"
+    kafka_topic = "faker_topic"
     print(kafka_topic)
     
     stream=create_sparksession()
