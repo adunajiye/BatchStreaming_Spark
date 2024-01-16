@@ -39,3 +39,7 @@ kafka-topics.sh
 --create
 
 Here, we created a topic with name faker_topic
+
+
+The code for producing messages to this topic is in streaming_pipeline/producer.py
+![Screenshot (53)](https://github.com/adunajiye/BatchStreaming_Spark/assets/80220180/6d641bf0-f08f-4fa1-a35b-f6a7a09a2bc4)
