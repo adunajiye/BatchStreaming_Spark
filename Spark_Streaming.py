@@ -10,6 +10,7 @@ from pyspark.sql.functions import explode,from_json,col
 from pyspark.sql.types import StringType,IntegerType,StructType,StructField
 import logging
 current_date=str(datetime.now())
+from os import environ
 # env_var=dotenv_values('.env')
 logger = logging.getLogger("spark_structured_streaming")
 
@@ -25,7 +26,7 @@ jars = ",".join(packages)
 gcs_keyfile = ""
 gcs_keyfilee = gcs_keyfile
 def create_sparksession():
-    spark = SparkSession.builder.appName('Streaming Pipeline')\
+    spark = SparkSession.builder.appName('Kafka_BatchStreaming')\
                 .config('spark.jars.packages',jars)\
                 .config('spark.master',cluster_manager)\
                 .getOrCreate()
@@ -38,7 +39,6 @@ def create_sparksession():
     spark.sparkContext.setLogLevel("ERROR")
     logging.info('Spark session created successfully')
     return spark   
-# create_sparksession()
 
 
 
@@ -53,7 +53,6 @@ def schema():
     StructField('quantity', IntegerType(), False),
     StructField('price',IntegerType(), False)])
     return columns
-# schema()
 
 
 def read_stream():
@@ -74,18 +73,26 @@ def read_stream():
     df2=df1.selectExpr("CAST(value AS STRING)",'headers')
     df3=df2.select(from_json('value',schema=schema()).alias('temp')).select('temp.*')
     return df3
-# read_stream()
+
 
 
 def write_stream():
   """
-    Starts the streaming to table spark_streaming.random_names in cassandra
+    Starts the streaming to table spark_streaming.random data in Google Cloud buckets
   """
   logging.info("Streaming is being started...")
   bucket_streamm = read_stream()
   bucket_uri = ""
   checkpoint_uri = ""
-  storage_stream = bucket_streamm.writeStream \
+
+
+  # Google BigQuery configuration
+gcp_credentials = environ.get('GCP_CREDENTIALS')
+gcp_project = environ.get('GCP_PROJECT')
+bigquery_dataset = environ.get('GCP_BIGQUERY_DATASET')
+bigquery_table = environ.get('GCP_BIGQUERY_TABLE')
+bigquery_uri = f'{gcp_project}:{bigquery_dataset}.{bigquery_table}'
+storage_stream = bucket_streamm.writeStream \
   .format('csv')\
   .option('path',bucket_uri)\
   .option('checkpointLocation',checkpoint_uri)\
