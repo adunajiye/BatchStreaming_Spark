@@ -32,14 +32,14 @@ def Produce_kafka():
         # Kafka Topics
         faker_topic = 'faker_topic'
         producer = SerializingProducer({'bootstrap.servers': f'{kafka_host}',})
-        for i in range(1000):     
+        
         # Produce a message to a Kafka topic
-                producer.produce(faker_topic,
-                                key=credit_no,
-                                value=json.dumps(producer_data),
-                on_delivery=delivery_report
-            )
+        producer.produce(faker_topic,
+                        key=credit_no,
+                        value=json.dumps(producer_data),
+        on_delivery=delivery_report
+    )
 
-                print('Produced data {}, data: {}'.format(i, producer_data))
-                producer.flush()
+        print('Produced data {}, data: {}'.format(i, producer_data))
+        producer.flush()
 Produce_kafka()
