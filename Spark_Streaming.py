@@ -72,7 +72,7 @@ def kafka_schema():
 
 
 def read_stream(kafka_topic,schema):
-    kafka_boostrap_server = "localhost" + ":9092"
+    kafka_boostrap_server = "164.92.85.68" + ":9092"
     print(kafka_boostrap_server)
     kafka_topic = "faker_topic"
     print(kafka_topic)
@@ -92,13 +92,14 @@ def read_stream(kafka_topic,schema):
     # df4 = df3.select('data.*')
     return df3
 
+
 def write_Stream():
     """
     Starts the streaming to table spark_streaming.random data in aws s3 buckets
     """
     logging.info("Streaming is being started...")
     input = read_stream("faker_topic", schema=kafka_schema())
-    bucket_uri = ""
+    bucket_uri = "d2b-internal-assessment-bucket/analytics_export/ajiyemma1238/"
     file_name = "kafka_raw_data.csv"
     checkpoint_uri = ""
     current_time= datetime.now()
@@ -106,7 +107,8 @@ def write_Stream():
     Bucket_file_name = Bucket_file_name + file_name 
     print(Bucket_file_name)
 
-    output_path = f"s3://{bucket_uri}/{Bucket_file_name}"
+     # Specify the 'path' option for writing CSV files
+    output_path = f"s3:/{bucket_uri}/{Bucket_file_name}"
     print(output_path)
     print(checkpoint_uri)
     
@@ -120,7 +122,7 @@ def write_Stream():
     writedata.awaitTermination()  
     print('Streaming to AWS S3 .......')
 write_Stream()
-
+# print(kafka_data)
 
 
 

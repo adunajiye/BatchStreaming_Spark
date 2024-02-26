@@ -32,7 +32,17 @@ def Produce_kafka():
         # Kafka Topics
         faker_topic = 'faker_topic'
         producer = SerializingProducer({'bootstrap.servers': f'{kafka_host}',})
+
+        """docker exec -it 4b7b67a5435b kafka-topics --list --bootstrap-server 164.92.85.68:9092
+        This code runs the list of topic within our kafka topic
+        docker exec -it 4b7b67a5435b kafka-console-consumer --topic faker_topic --bootstrap-server 164.92.85.68:9092 --from-beginning
+        This code verify the data with in the kafka topic and message pusblished into
+        """
+
+
         
+        
+        # ./kafka-console-consumer.sh --bootstrap-server 164.92.85.68:9092 --topic faker_topic --from-beginning
         # Produce a message to a Kafka topic
         producer.produce(faker_topic,
                         key=credit_no,
